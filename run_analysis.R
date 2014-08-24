@@ -23,8 +23,8 @@ s_all <- rbind(s_train,s_test)
 #Read all of the text labels
 a_labels <-read.table("UCI HAR Dataset//activity_labels.txt")
 f_labels <-read.table("UCI HAR Dataset//features.txt")
-f_means <-grep ("mean",f[,2])
-f_std <-grep ("std",f[,2])
+f_means <-grep ("mean\\(",f[,2])
+f_std <-grep ("std\\(",f[,2])
 
 
 #Assign Column Labels
@@ -34,7 +34,7 @@ colnames(y_labels_frame) <-c("activity")
 colnames(s_all)<- c("subject")
 colnames(x_all)<-f_labels$V2
 
-#Get just mena and std columns
+#Get just means and std columns
 x_std<-x_all[,f_std]
 x_mean<-x_all[,f_means]
 

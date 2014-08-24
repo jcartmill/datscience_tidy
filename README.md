@@ -1,84 +1,20 @@
----
-title: "README"
-output: html_document
----
 
-#Purpose:
+**Purpose:** This data set is taken from Human Activity Recognition Using Smartphones Data Set[1]. The data is manipulated to illuststrate proficeincy in implementing and documenting the principles of "Tidy Data" outlined in the course.
 
-#Merges the training and the test sets to create one data set.
-#Extracts only the measurements on the mean and standard deviation for each measurement. 
-#Uses descriptive activity names to name the activities in the data set
-#Appropriately labels the data set with descriptive variable names. 
-#Creates a second, independent tidy data set with the average of each variable for each activity and each subject. 
-
-Code Book
-
-#Read in all of the data
-x_train <-read.table("UCI HAR Dataset//train//X_train.txt")
-y_train <-read.table("UCI HAR Dataset//train//y_train.txt")
-s_train <-read.table("UCI HAR Dataset//train//subject_train.txt")
-
-x_test <-read.table("UCI HAR Dataset//test//X_test.txt")
-y_test <-read.table("UCI HAR Dataset//test//y_test.txt")
-s_test <-read.table("UCI HAR Dataset//test//subject_test.txt")
-
-#Merge the two sets
-x_all <- rbind(x_train,x_test)
-y_all <- rbind(y_train,y_test)
-s_all <- rbind(s_train,s_test)
-
-#Read all of the text labels
-a_labels <-read.table("UCI HAR Dataset//activity_labels.txt")
-f_labels <-read.table("UCI HAR Dataset//features.txt")
-f_means <-grep ("mean",f[,2])
-f_std <-grep ("std",f[,2])
+**Data Description:** 
+The original data set consists from 30 subjects performing six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a Samsung Galaxy S II smartphone.  
+The data set was randomly partitioned into two sets, where 70% is training data and 30% the test data.  
+The original data set consists of 561 features of time and frequency domain variables.  
 
 
-#Assign Column Labels
-y_labels <-a_labels$V2[y_all[,]]
-y_labels_frame<-data.frame(y_labels)
-colnames(y_labels_frame) <-c("Activity")
-colnames(s_all)<- c("Subject")
-colnames(x_all)<-f_labels$V2
+**Methodology:**
+The following requirements were given for the course project:  
+1.  Merge the training and the test sets to create one data set.  
+2.  Extract only the measurements on the mean and standard deviation for each   measurement. 
+3.  Use descriptive activity names to name the activities in the data set  
+4.  Appropriately label the data set with descriptive variable names.   
+5.  Create a second, independent tidy data set with the average of each variable for each activity and each subject.  
 
-#Get just mean and std columns
-x_std<-x_all[,f_std]
-x_mean<-x_all[,f_means]
+https://github.com/jcartmill/datscience_tidy/blob/master/CODEBOOK.md  
 
-#push together
-all_data <-cbind(s_all,y_labels_frame,x_mean,x_std)
-
-##Sort by Subject number
-sort_data<-all_data[order(all_data$Subject,all_data$Activity),]
-out_df<-sort_data[1,]
-out_df[-1,]
-#Loop to get columnmeans for each subject and activity
-vx = TRUE
-for (i in  unique(sort_data$Subject)){
-        for (j in  unique(sort_data$Activity)){
-                #  Get colmeans for each subject and activity
-                tmp_df<-rbind(colMeans(sort_data[sort_data$Subject== i & sort_data$Activity == j ,3:length(sort_data)]))
-                adf <- data.frame(j)
-                sdf <- data.frame(i)
-                
-                colnames(adf) <-c("Activity")
-                colnames(sdf)<- c("Subject")
-                
-                mean_df<-cbind(sdf,adf,tmp_df)
-                
-                if (vx){
-                        out_df = mean_df
-                        vx = FALSE
-                } else{
-                out_df<-rbind(out_df,mean_df)
-                }
-        }
-        
-}
-#Output Table to csv File 
-
-write.table(out_df,"UCI HAR Dataset//tidy_data.txt",sep=",",row.names=FALSE)
-
-
-
-
+[1] Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support Vector Machine. International Workshop of Ambient Assisted Living (IWAAL 2012). Vitoria-Gasteiz, Spain. Dec 2012
